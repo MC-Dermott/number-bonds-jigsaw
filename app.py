@@ -95,7 +95,7 @@ def valid_pairs(target: int) -> set[tuple[int, int]]:
 
 def new_game(target: int, timer_enabled: bool, timer_mode: str, countdown_seconds: int) -> None:
     st.session_state.target = target
-    st.session_state.order = random.sample(range(10), 10)
+    st.session_state.order = list(range(10))
     st.session_state.found = []
     st.session_state.selected = None
     st.session_state.message = None
