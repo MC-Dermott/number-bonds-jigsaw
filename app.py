@@ -3,7 +3,90 @@ import time
 
 import streamlit as st
 
-st.set_page_config(page_title="Number Bonds Jigsaw", page_icon="🧩", layout="centered")
+TEXT = {
+    "page_title": {
+        "en": "Number Bonds Jigsaw",
+        "gd": "Tòimhseachan Ceanglaichean Àireimh",
+    },
+    "settings_header": {
+        "en": "⚙️ Settings",
+        "gd": "⚙️ Roghainnean",
+    },
+    "randomise_label": {
+        "en": "🎲 Randomise number each game",
+        "gd": "🎲 Àireamh air thuaiream gach geama",
+    },
+    "randomise_caption": {
+        "en": "A random target (1-10) will be picked when you start a new game.",
+        "gd": "Thèid àireamh air thuaiream (1-10) a thaghadh nuair a thòisicheas tu geama ùr.",
+    },
+    "target_label": {
+        "en": "Number bonds to:",
+        "gd": "Ceanglaichean àireimh gu:",
+    },
+    "timer_label": {
+        "en": "Enable timer",
+        "gd": "Cuir an cunntair-ama an gnìomh",
+    },
+    "timer_type_label": {
+        "en": "Timer type",
+        "gd": "Seòrsa cunntair-ama",
+    },
+    "stopwatch_option": {
+        "en": "Count up (stopwatch)",
+        "gd": "Cunntadh suas (uaireadair-stad)",
+    },
+    "countdown_option": {
+        "en": "Countdown",
+        "gd": "Cunntadh sìos",
+    },
+    "time_limit_label": {
+        "en": "Time limit (seconds)",
+        "gd": "Cuingealachadh ùine (diogan)",
+    },
+    "new_game_button": {
+        "en": "🔄 New Game",
+        "gd": "🔄 Geama Ùr",
+    },
+    "instructions": {
+        "en": "Click two jigsaw pieces that add up to {target}! Click the same piece twice for a double, like 5 + 5.",
+        "gd": "Briog air dà phìos a tha a’ dèanamh suas {target}! Briog air an aon phìos dà thuras airson dùblachadh, can 5 + 5.",
+    },
+    "found_caption": {
+        "en": "Found {found} of {total} pairs",
+        "gd": "Air lorg {found} à {total} càraidean",
+    },
+    "success_msg": {
+        "en": "🎉 {a} + {b} = {target}!",
+        "gd": "🎉 {a} + {b} = {target}!",
+    },
+    "error_msg": {
+        "en": "❌ {a} + {b} = {sum}, not {target}. Try again!",
+        "gd": "❌ {a} + {b} = {sum}, chan e {target}. Feuch a-rithist!",
+    },
+    "cancel_button": {
+        "en": "✋ Cancel selection ({digit})",
+        "gd": "✋ Cuir dheth an taghadh ({digit})",
+    },
+    "completed_msg": {
+        "en": "🏆 All pairs found in {time}!",
+        "gd": "🏆 Lorg thu na càraidean uile ann an {time}!",
+    },
+    "time_up_msg": {
+        "en": "⏰ Time's up! Missed pairs: {missed}",
+        "gd": "⏰ Tha an ùine a-mach! Càraidean a chaidh a chall: {missed}",
+    },
+    "completed_header": {
+        "en": "🧩 Completed pairs",
+        "gd": "🧩 Càraidean coileanta",
+    },
+}
+
+
+def t(key: str, **kwargs) -> str:
+    lang = st.session_state.get("lang", "en")
+    text = TEXT[key][lang]
+    return text.format(**kwargs) if kwargs else text
 
 
 def valid_pairs(target: int) -> set[tuple[int, int]]:
@@ -28,8 +111,14 @@ def new_game(target: int, timer_enabled: bool, timer_mode: str, countdown_second
 
 def init_state() -> None:
     if "order" not in st.session_state:
-        new_game(target=10, timer_enabled=False, timer_mode="Count up (stopwatch)", countdown_seconds=60)
+        new_game(target=10, timer_enabled=False, timer_mode="stopwatch", countdown_seconds=60)
+    if "lang" not in st.session_state:
+        st.session_state.lang = "en"
 
+
+init_state()
+
+st.set_page_config(page_title=t("page_title"), page_icon="🧩", layout="centered")
 
 st.markdown(
     """
@@ -110,33 +199,41 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-init_state()
-
 with st.sidebar:
-    st.header("⚙️ Settings")
-    randomise = st.checkbox("🎲 Randomise number each game", value=st.session_state.get("randomise", False))
+    lang_options = ["en", "gd"]
+    st.selectbox(
+        "Language / Cànan",
+        options=lang_options,
+        format_func=lambda code: "English" if code == "en" else "Gàidhlig",
+        index=lang_options.index(st.session_state.lang),
+        key="lang",
+    )
+
+    st.header(t("settings_header"))
+    randomise = st.checkbox(t("randomise_label"), value=st.session_state.get("randomise", False))
     if randomise:
-        st.caption("A random target (1-10) will be picked when you start a new game.")
+        st.caption(t("randomise_caption"))
         target_choice = None
     else:
         target_choice = st.selectbox(
-            "Number bonds to:",
+            t("target_label"),
             options=list(range(1, 11)),
             index=list(range(1, 11)).index(st.session_state.target),
         )
-    timer_choice = st.checkbox("Enable timer", value=st.session_state.timer_enabled)
+    timer_choice = st.checkbox(t("timer_label"), value=st.session_state.timer_enabled)
     mode_choice = st.session_state.timer_mode
     countdown_choice = st.session_state.countdown_seconds
     if timer_choice:
         mode_choice = st.radio(
-            "Timer type",
-            options=["Count up (stopwatch)", "Countdown"],
-            index=["Count up (stopwatch)", "Countdown"].index(st.session_state.timer_mode),
+            t("timer_type_label"),
+            options=["stopwatch", "countdown"],
+            format_func=lambda v: t("stopwatch_option") if v == "stopwatch" else t("countdown_option"),
+            index=["stopwatch", "countdown"].index(st.session_state.timer_mode),
         )
-        if mode_choice == "Countdown":
-            countdown_choice = st.slider("Time limit (seconds)", 15, 180, st.session_state.countdown_seconds, step=15)
+        if mode_choice == "countdown":
+            countdown_choice = st.slider(t("time_limit_label"), 15, 180, st.session_state.countdown_seconds, step=15)
 
-    if st.button("🔄 New Game", type="primary", use_container_width=True):
+    if st.button(t("new_game_button"), type="primary", use_container_width=True):
         st.session_state.randomise = randomise
         chosen_target = random.randint(1, 10) if randomise else target_choice
         new_game(chosen_target, timer_choice, mode_choice, countdown_choice)
@@ -148,8 +245,7 @@ total_pairs = len(pairs)
 
 st.markdown(
     f"<h1 style='text-align:center;font-size:6rem;margin-bottom:0;'>{target}</h1>"
-    f"<p style='text-align:center;color:gray;margin-top:0;'>Click two jigsaw pieces that add up to {target}! "
-    f"Click the same piece twice for a double, like 5 + 5.</p>",
+    f"<p style='text-align:center;color:gray;margin-top:0;'>{t('instructions', target=target)}</p>",
     unsafe_allow_html=True,
 )
 
@@ -162,10 +258,10 @@ def format_time(seconds: float) -> str:
 def try_pair(a: int, b: int) -> None:
     if (a, b) in pairs and (a, b) not in st.session_state.found:
         st.session_state.found.append((a, b))
-        st.session_state.message = f"🎉 {a} + {b} = {target}!"
+        st.session_state.message = t("success_msg", a=a, b=b, target=target)
         st.session_state.message_kind = "success"
     else:
-        st.session_state.message = f"❌ {a} + {b} = {a + b}, not {target}. Try again!"
+        st.session_state.message = t("error_msg", a=a, b=b, sum=a + b, target=target)
         st.session_state.message_kind = "error"
     st.session_state.selected = None
 
@@ -193,7 +289,7 @@ def handle_click(digit: int) -> None:
 def render_body() -> None:
     if st.session_state.timer_enabled and not st.session_state.game_over:
         elapsed = time.time() - st.session_state.start_time
-        if st.session_state.timer_mode == "Countdown":
+        if st.session_state.timer_mode == "countdown":
             remaining = st.session_state.countdown_seconds - elapsed
             if remaining <= 0:
                 st.session_state.game_over = True
@@ -210,7 +306,7 @@ def render_body() -> None:
             )
 
     st.progress(len(st.session_state.found) / total_pairs if total_pairs else 1.0)
-    st.caption(f"Found {len(st.session_state.found)} of {total_pairs} pairs")
+    st.caption(t("found_caption", found=len(st.session_state.found), total=total_pairs))
 
     if st.session_state.message:
         if st.session_state.message_kind == "success":
@@ -219,16 +315,17 @@ def render_body() -> None:
             st.error(st.session_state.message)
 
     if st.session_state.selected is not None and not st.session_state.game_over:
-        if st.button(f"✋ Cancel selection ({st.session_state.selected})"):
+        if st.button(t("cancel_button", digit=st.session_state.selected)):
             st.session_state.selected = None
             st.rerun()
 
     if st.session_state.completed:
         st.balloons()
-        st.success(f"🏆 All pairs found in {format_time(st.session_state.elapsed_at_finish)}!")
+        st.success(t("completed_msg", time=format_time(st.session_state.elapsed_at_finish)))
     elif st.session_state.game_over:
         missed = pairs - set(st.session_state.found)
-        st.error("⏰ Time's up! Missed pairs: " + ", ".join(f"{a}+{b}" for a, b in sorted(missed)))
+        missed_str = ", ".join(f"{a}+{b}" for a, b in sorted(missed))
+        st.error(t("time_up_msg", missed=missed_str))
 
     found_digits = {digit for pair in st.session_state.found for digit in pair}
     remaining = [digit for digit in st.session_state.order if digit not in found_digits]
@@ -251,7 +348,7 @@ def render_body() -> None:
                     st.rerun()
 
     if st.session_state.found:
-        st.markdown("#### 🧩 Completed pairs")
+        st.markdown(f"#### {t('completed_header')}")
         rows_html = "".join(
             f"<div class='joined-row'>"
             f"<div class='joined-pair'>"
