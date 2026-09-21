@@ -125,9 +125,11 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap');
 
+    html { font-size: 115%; }
+
     p.instructions-text {
         font-family: 'Baloo 2', 'Comic Sans MS', sans-serif !important;
-        font-size: 1.5rem !important;
+        font-size: 1.65rem !important;
         font-weight: 600 !important;
         color: #495057 !important;
         text-align: center !important;
@@ -136,28 +138,28 @@ st.markdown(
 
     div.stButton > button {
         width: 100%;
-        height: 88px;
-        font-size: 2rem;
+        height: 104px;
+        font-size: 2.3rem;
         font-weight: 800;
-        border-radius: 16px;
+        border-radius: 18px;
         position: relative;
         border: 3px solid rgba(0,0,0,0.15);
-        margin: 6px 10px;
+        margin: 8px 12px;
     }
     div.stButton > button::before,
     div.stButton > button::after {
         content: "";
         position: absolute;
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         background-color: inherit;
         border: 3px solid rgba(0,0,0,0.15);
         border-radius: 50%;
         top: 50%;
         transform: translateY(-50%);
     }
-    div.stButton > button::before { left: -14px; }
-    div.stButton > button::after { right: -14px; }
+    div.stButton > button::before { left: -16px; }
+    div.stButton > button::after { right: -16px; }
 
     @keyframes dropIn {
         from { opacity: 0; transform: translateY(-40px) scale(0.9); }
@@ -175,33 +177,33 @@ st.markdown(
         display: inline-flex;
     }
     .joined-piece {
-        width: 56px;
-        height: 56px;
+        width: 68px;
+        height: 68px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
+        font-size: 1.7rem;
         font-weight: 800;
         color: white;
         background: #51cf66;
         border: 3px solid rgba(0,0,0,0.15);
     }
-    .joined-piece.left { border-radius: 14px 0 0 14px; }
-    .joined-piece.right { border-radius: 0 14px 14px 0; border-left: none; }
+    .joined-piece.left { border-radius: 16px 0 0 16px; }
+    .joined-piece.right { border-radius: 0 16px 16px 0; border-left: none; }
     .joined-pair::after {
         content: "";
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 16px;
-        height: 16px;
+        width: 19px;
+        height: 19px;
         background: #51cf66;
         border: 3px solid rgba(0,0,0,0.15);
         border-radius: 50%;
         transform: translate(-50%, -50%);
     }
     .joined-eq {
-        font-size: 1.3rem;
+        font-size: 1.55rem;
         font-weight: 700;
         color: #2f9e44;
     }
@@ -255,7 +257,7 @@ pairs = valid_pairs(target)
 total_pairs = len(pairs)
 
 st.markdown(
-    f"<h1 style='text-align:center;font-size:6rem;margin-bottom:0;'>{target}</h1>"
+    f"<h1 style='text-align:center;font-size:6.5rem;margin-bottom:0;'>{target}</h1>"
     f"<p class='instructions-text'>{t('instructions', target=target)}</p>",
     unsafe_allow_html=True,
 )
