@@ -123,6 +123,17 @@ st.set_page_config(page_title=t("page_title"), page_icon="🧩", layout="centere
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&display=swap');
+
+    p.instructions-text {
+        font-family: 'Baloo 2', 'Comic Sans MS', sans-serif !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        color: #495057 !important;
+        text-align: center !important;
+        margin-top: 0 !important;
+    }
+
     div.stButton > button {
         width: 100%;
         height: 88px;
@@ -245,7 +256,7 @@ total_pairs = len(pairs)
 
 st.markdown(
     f"<h1 style='text-align:center;font-size:6rem;margin-bottom:0;'>{target}</h1>"
-    f"<p style='text-align:center;color:gray;margin-top:0;'>{t('instructions', target=target)}</p>",
+    f"<p class='instructions-text'>{t('instructions', target=target)}</p>",
     unsafe_allow_html=True,
 )
 
